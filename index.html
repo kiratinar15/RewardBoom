@@ -118,7 +118,7 @@
 
             <section x-show="currentPage === 'home'" class="flex-1 p-8 overflow-y-auto space-y-10">
                 <div class="w-full bg-red-600 rounded-[2rem] p-12 flex flex-col md:flex-row justify-between items-center relative overflow-hidden border-4 border-black shadow-[10px_10px_0px_#000]">
-                    <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-20 font-bold italic pointer-events-none uppercase leading-none text-black select-none">DATA</div>
+                    <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-20 font-bold italic pointer-events-none uppercase leading-none text-black select-none">TOTAL</div>
                     <div class="z-10 text-center md:text-left">
                         <h2 class="text-white text-5xl font-bold italic tracking-tight uppercase drop-shadow-[3px_3px_0px_#000]" x-text="getCurrentBox()?.title"></h2>
                         <div class="mt-6 flex items-center space-x-2" x-show="getEventDate(getCurrentBox()?.id)">
@@ -283,3 +283,4 @@
     </script>
 </body>
 </html>
+
