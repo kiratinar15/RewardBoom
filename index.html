@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>exchangeReward - Management System</title>
+    <title>exchangeReward - System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,7 +11,11 @@
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #0b0e14; color: #f1f5f9; }
         .glass-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2rem; }
-        .total-glow { text-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+        /* ปรับแต่งแสงเรืองรองให้ตัวเลขเด่นขึ้น */
+        .total-glow { 
+            text-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 80px rgba(59, 130, 246, 0.4); 
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+        }
         [x-cloak] { display: none !important; }
         .sidebar-active { background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 100%); border-left: 4px solid #3b82f6; color: #3b82f6 !important; }
     </style>
@@ -20,15 +24,15 @@
 
     <template x-if="currentPage === 'login'">
         <div class="min-h-screen flex items-center justify-center p-4">
-            <div class="glass-card w-full max-w-md p-10 shadow-2xl border-orange-500/10 text-center">
-                <div class="bg-orange-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-900/40">
+            <div class="glass-card w-full max-w-md p-10 shadow-2xl text-center">
+                <div class="bg-orange-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-900/40 rotate-3">
                     <span class="text-3xl text-white">🔐</span>
                 </div>
-                <h2 class="text-3xl font-black italic text-white tracking-tight uppercase mb-2">Admin Login</h2>
-                <p class="text-gray-500 mb-8 text-[10px] uppercase tracking-[0.3em] font-bold">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</p>
+                <h2 class="text-3xl font-black italic text-white tracking-tight uppercase">EXCHANGE REWARD</h2>
+                <p class="text-gray-500 mb-8 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Authorization</p>
                 <div class="space-y-4 text-left">
                     <input type="password" x-model="passInput" placeholder="PASSWORD" class="w-full bg-[#0b0e14] border border-white/10 rounded-2xl px-4 py-4 focus:outline-none focus:ring-1 focus:ring-orange-500 text-white text-center font-bold tracking-[0.5em]">
-                    <button @click="doLogin" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-orange-900/40 transition-all uppercase italic">➜ เข้าสู่ระบบ</button>
+                    <button @click="doLogin" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-orange-900/40 transition-all uppercase italic">Login System</button>
                     <button @click="currentPage = 'home'" class="w-full py-2 text-gray-600 text-[10px] hover:text-white transition-colors uppercase tracking-widest font-bold text-center">← กลับหน้าหลัก</button>
                 </div>
             </div>
@@ -39,42 +43,36 @@
         <div class="min-h-screen p-8 max-w-5xl mx-auto">
             <header class="flex justify-between items-center mb-12">
                 <div class="flex items-center space-x-4">
-                    <div class="bg-orange-600 p-3 rounded-2xl text-white shadow-lg shadow-orange-900/30 font-bold">⚙️</div>
-                    <div>
-                        <h1 class="text-2xl font-black italic tracking-tight uppercase">EXCHANGEREWARD ADMIN</h1>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">ยินดีต้อนรับ: adminboom</p>
-                    </div>
+                    <div class="bg-orange-600 p-3 rounded-2xl text-white shadow-lg">⚙️</div>
+                    <h1 class="text-2xl font-black italic tracking-tight uppercase">Admin Control</h1>
                 </div>
-                <button @click="logout" class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-600 transition-all uppercase tracking-widest">➜ Logout</button>
+                <button @click="logout" class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-600 transition-all">➜ Logout</button>
             </header>
 
             <div class="space-y-8">
                 <div class="glass-card p-10 border-orange-500/20 shadow-2xl">
-                    <h3 class="font-bold mb-6 text-orange-400 uppercase tracking-widest text-sm italic">DATABASE CONNECTION (GOOGLE SHEETS)</h3>
+                    <h3 class="font-bold mb-6 text-orange-400 uppercase tracking-widest text-sm italic">Database Config</h3>
                     <div class="space-y-6">
-                        <div class="bg-[#0b0e14] p-4 rounded-xl border border-white/5">
-                            <label class="text-[10px] text-gray-500 uppercase font-bold mb-2 block">CSV OUTPUT LINK</label>
-                            <input type="text" x-model="csvUrl" class="w-full bg-transparent text-xs font-mono text-blue-400 focus:outline-none overflow-x-auto">
-                        </div>
-                        <button @click="saveUrl" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-2xl shadow-2xl shadow-orange-900/40 transition-all uppercase tracking-widest italic">
-                            💾 Save & Refresh Database
+                        <input type="text" x-model="csvUrl" class="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-5 py-4 text-xs font-mono text-gray-400">
+                        <button @click="saveUrl" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-2xl shadow-2xl shadow-orange-900/40 transition-all uppercase italic tracking-widest">
+                            Update Database
                         </button>
                     </div>
                 </div>
 
                 <div class="glass-card p-10 border-emerald-500/20 shadow-2xl bg-emerald-500/[0.02]">
                     <h3 class="font-bold mb-6 text-emerald-400 uppercase tracking-widest text-sm italic flex items-center">
-                        <span class="mr-2">📊</span> GOOGLE SHEETS EDITOR
+                        <span class="mr-2">📊</span> Google Sheets Editor
                     </h3>
                     <div class="flex flex-col md:flex-row items-center justify-between bg-[#0b0e14] p-6 rounded-2xl border border-white/5 gap-6">
                         <div class="text-left">
-                            <p class="text-sm font-bold text-white mb-1 tracking-tight">ต้องการแก้ไขข้อมูลในชีทหรือไม่?</p>
-                            <p class="text-xs text-gray-500">กดปุ่มด้านขวาเพื่อเปิดหน้า Google Sheets สำหรับใส่ข้อมูลรายการแลกของรางวัล</p>
+                            <p class="text-sm font-bold text-white mb-1">ต้องการแก้ไขข้อมูลใช่หรือไม่?</p>
+                            <p class="text-xs text-gray-500 italic">กดเพื่อเปิดหน้า Google Sheets สำหรับใส่ข้อมูลส่งในรอบนี้</p>
                         </div>
                         <a href="https://docs.google.com/spreadsheets/d/1fPWt2t4zumgImIgoBWLMyIBO-8YR19eOoCaJzbl3jNw/edit#gid=0" 
                            target="_blank" 
-                           class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest flex items-center space-x-2 shadow-xl shadow-emerald-900/20 transition-all">
-                            <span>🌐 เปิด Google Sheets</span>
+                           class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-xl transition-all">
+                            🌐 เปิด Google Sheets
                         </a>
                     </div>
                 </div>
@@ -87,7 +85,7 @@
             <aside class="w-72 bg-[#111827] border-r border-white/5 flex flex-col shadow-2xl z-20">
                 <div class="p-8">
                     <h2 class="text-2xl font-black text-blue-500 italic tracking-tighter uppercase leading-none">EXCHANGE<br>REWARD</h2>
-                    <p class="text-[10px] text-gray-600 uppercase font-black tracking-[0.25em] mt-2">Stats Dashboard</p>
+                    <p class="text-[10px] text-gray-600 uppercase font-black tracking-[0.25em] mt-2">Dashboard</p>
                 </div>
                 <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
                     <template x-for="box in rewardData" :key="box.id">
@@ -98,7 +96,7 @@
                                 <span class="text-[10px] font-bold opacity-40 uppercase" x-text="box.id"></span>
                                 <span class="text-[10px] font-black italic text-gray-400" x-text="box.total"></span>
                             </div>
-                            <div class="text-left truncate w-full font-bold" x-text="box.title"></div>
+                            <div class="text-left truncate w-full font-bold uppercase tracking-tight" x-text="box.title"></div>
                         </button>
                     </template>
                 </nav>
@@ -111,56 +109,60 @@
                         <h1 class="text-lg font-bold text-white italic tracking-tight uppercase" x-text="getCurrentBox()?.title || 'Syncing...'"></h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <div class="relative group">
-                            <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." 
-                                class="bg-[#0b0e14] border border-white/10 rounded-full pl-6 pr-6 py-2 text-xs text-white w-64 focus:ring-1 focus:ring-blue-500 transition-all outline-none shadow-inner">
-                        </div>
+                        <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." 
+                            class="bg-[#0b0e14] border border-white/10 rounded-full pl-6 pr-6 py-2 text-xs text-white w-64 focus:ring-1 focus:ring-blue-500 transition-all outline-none">
                         <div class="h-6 w-px bg-white/10 mx-2"></div>
-                        <button @click="currentPage = 'login'" class="bg-blue-600/10 text-blue-500 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
-                            🔒 Admin Access
+                        <button @click="currentPage = 'login'" class="bg-blue-600/10 text-blue-500 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
+                            🔒 ADMIN
                         </button>
                     </div>
                 </header>
 
                 <section class="flex-1 p-8 overflow-y-auto space-y-8 scroll-smooth">
-                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-[2.5rem] p-12 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-2xl shadow-blue-900/40 border border-white/10">
-                        <div class="absolute -right-10 -bottom-10 text-[18rem] opacity-10 font-black italic pointer-events-none uppercase tracking-tighter">TOTAL</div>
-                        <div class="z-10 mb-6 md:mb-0">
-                            <p class="text-[10px] text-blue-200 uppercase font-black tracking-[0.6em] mb-4 flex items-center">
-                                <span class="w-8 h-[2px] bg-blue-300 mr-2"></span>GRAND TOTAL STATISTICS
-                            </p>
-                            <h2 class="text-white text-3xl font-black italic tracking-tight uppercase opacity-90" x-text="getCurrentBox()?.title"></h2>
+                    
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 rounded-[2.5rem] p-12 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-[0_20px_50px_rgba(30,58,138,0.5)] border border-white/10">
+                            <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-10 font-black italic pointer-events-none uppercase tracking-tighter select-none">TOTAL</div>
+                            
+                            <div class="z-10 mb-6 md:mb-0 text-center md:text-left">
+                                <h2 class="text-white text-5xl font-black italic tracking-tighter uppercase leading-none drop-shadow-lg" x-text="getCurrentBox()?.title"></h2>
+                                <p class="text-[11px] text-blue-200 uppercase font-black tracking-[0.4em] mt-4 opacity-70">รวบรวมข้อมูลประจำรอบ</p>
+                            </div>
+
+                            <div class="text-center md:text-right z-10">
+                                <span class="text-[12rem] font-black text-white total-glow tracking-tighter block leading-none select-all" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
+                                <span class="text-blue-100 font-black uppercase text-[14px] tracking-[0.6em] italic opacity-80 mt-2 block">Redeems Collected</span>
+                            </div>
                         </div>
-                        <div class="text-right z-10">
-                            <span class="text-[10rem] font-black text-white total-glow tracking-tighter block leading-none" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
-                            <span class="text-blue-100 font-black uppercase text-[12px] tracking-[0.4em] italic opacity-80">TIMES REDEEMED</span>
+
+                        <div class="w-full md:w-64 glass-card p-10 flex flex-col justify-center items-center text-center relative border-blue-500/10 shadow-2xl overflow-hidden group">
+                             <div class="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-all duration-500"></div>
+                             <p class="text-[11px] text-gray-500 uppercase font-black tracking-widest mb-6 italic z-10">ITEMS COUNT</p>
+                             <div class="text-8xl font-black text-blue-500 italic z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" x-text="getCurrentBox()?.items.length || 0"></div>
+                             <p class="text-[10px] text-blue-400 font-bold mt-4 uppercase z-10 tracking-widest opacity-60">รายการทั้งหมด</p>
                         </div>
                     </div>
 
-                    <div class="glass-card p-10 shadow-2xl border-white/5"><div style="height: 380px;"><canvas id="itemChart"></canvas></div></div>
-                    
-                    <div class="glass-card overflow-hidden shadow-2xl border-white/5">
-                        <table class="w-full text-left">
-                            <thead class="bg-white/[0.03] border-b border-white/5">
-                                <tr class="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em]">
-                                    <th class="px-10 py-6">Reward Detail</th>
-                                    <th class="px-10 py-6 text-center">Amount (Redeems)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-white/5">
-                                <template x-for="item in filteredItems()" :key="item.name + item.sys">
-                                    <tr class="hover:bg-blue-500/[0.04] transition-colors group">
-                                        <td class="px-10 py-6">
-                                            <div class="text-sm font-bold text-gray-200 group-hover:text-blue-400 transition-all uppercase tracking-tight" x-text="item.name"></div>
-                                            <div class="text-[10px] text-gray-600 font-mono mt-0.5 uppercase tracking-tighter" x-text="item.sys"></div>
-                                        </td>
-                                        <td class="px-10 py-6 text-center">
-                                            <span class="text-3xl font-black text-white font-mono drop-shadow-lg" x-text="item.count"></span>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                    <div class="grid grid-cols-1 gap-8">
+                        <div class="glass-card p-10 shadow-2xl border-white/5"><div style="height: 400px;"><canvas id="itemChart"></canvas></div></div>
+                        <div class="glass-card overflow-hidden shadow-2xl border-white/5">
+                            <table class="w-full text-left">
+                                <thead class="bg-white/[0.03] border-b border-white/5 uppercase tracking-[0.4em] text-[10px] font-black text-gray-500">
+                                    <tr><th class="px-10 py-6">Reward List</th><th class="px-10 py-6 text-center">Collected</th></tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/5">
+                                    <template x-for="item in filteredItems()" :key="item.name + item.sys">
+                                        <tr class="hover:bg-blue-500/[0.04] transition-colors group">
+                                            <td class="px-10 py-6">
+                                                <div class="text-sm font-bold text-gray-200 group-hover:text-blue-400 transition-all uppercase tracking-tight" x-text="item.name"></div>
+                                                <div class="text-[10px] text-gray-600 font-mono mt-0.5 uppercase tracking-tighter opacity-50" x-text="item.sys"></div>
+                                            </td>
+                                            <td class="px-10 py-6 text-center text-4xl font-black text-white font-mono" x-text="item.count"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
             </main>
@@ -181,7 +183,7 @@
                 async init() { await this.fetchData(); },
                 doLogin() {
                     if (this.passInput === '123') { this.currentPage = 'admin'; this.passInput = ''; }
-                    else { alert('Access Denied: Incorrect Password'); }
+                    else { alert('Access Denied'); }
                 },
                 logout() { this.currentPage = 'home'; },
                 saveUrl() {
@@ -197,7 +199,7 @@
                             if (!this.activeTab) this.activeTab = this.rewardData[0].id;
                             this.$nextTick(() => this.renderChart());
                         }
-                    } catch (e) { console.error("Database Error:", e); }
+                    } catch (e) { console.error(e); }
                 },
                 parseCSV(csv) {
                     const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
@@ -232,7 +234,7 @@
                                 data: box.items.map(i => i.count),
                                 backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
                                 borderRadius: 12,
-                                barThickness: 22
+                                barThickness: 24
                             }]
                         },
                         options: {
@@ -241,7 +243,7 @@
                             indexAxis: 'y',
                             scales: {
                                 x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#475569', font: { size: 10 } } },
-                                y: { grid: { display: false }, ticks: { color: '#fff', font: { family: 'Kanit', size: 12 } } }
+                                y: { grid: { display: false }, ticks: { color: '#fff', font: { family: 'Kanit', size: 14, weight: 'bold' } } }
                             },
                             plugins: { legend: { display: false } }
                         }
