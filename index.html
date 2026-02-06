@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Reward Stats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kanit', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        .sidebar-item.active { background: linear-gradient(90deg, #1e293b 0%, #334155 100%); border-left: 4px solid #3b82f6; color: #3b82f6; font-weight: bold; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body x-data="dashboard()">
+
+    <div x-show="loading" class="fixed inset-0 flex items-center justify-center bg-[#0f172a] z-50">
+        <div class="text-center">
+            <div class="animate-bounce mb-4 text-4xl">🎁</div>
+            <p class="text-blue-400 animate-pulse text-sm uppercase tracking-widest">กำลังดึงข้อมูล...</p>
+        </div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden" x-cloak x-show="!loading">
+        <div class="w-80 bg-[#1e293b] border-r border-white/5 flex flex-col shadow-2xl">
+            <div class="p-8">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-2xl">📊</span>
+                    <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">DASHBOARD</h2>
+                </div>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Server Statistics v2.0</p>
+            </div>
+            
+            <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
+                <template x-for="box in rewardData" :key="box.id">
+                    <button @click="changeTab(box.id)" 
+                        :class="{'active': activeTab === box.id}"
+                        class="sidebar-item w-full flex flex-col px-5 py-4 text-sm text-gray-400 hover:bg-white/5 rounded-2xl transition-all duration-300">
+                        <div class="flex justify-between w-full mb-1">
+                            <span class="text-[10px] opacity-60" x-text="'ID: ' + box.id"></span>
+                            <span class="text-emerald-400 font-mono" x-text="box.total"></span>
+                        </div>
+                        <div class="text-left truncate w-full" x-text="'📅 ' + box.title"></div>
+                    </button>
+                </template>
+            </nav>
+        </div>
+
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-[#1e293b]/50 px-8 py-6 flex justify-between items-center border-b border-white/5">
+                <div>
+                    <h1 class="text-2xl font-bold text-white flex items-center" x-text="getCurrentBox()?.title"></h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <input type="text" x-model="search" placeholder="🔍 ค้นหารายการ..." 
+                        class="bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-80 text-white shadow-2xl">
+                </div>
+            </header>
+
+            <section class="flex-1 p-8 overflow-y-auto space-y-8 bg-[#0f172a]">
+                <div class="glass rounded-[2rem] p-8 shadow-2xl">
+                    <div style="height: 350px;">
+                        <canvas id="itemChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-gray-500 text-[10px] uppercase tracking-[0.2em] border-b border-white/5">
+                                <th class="px-10 py-6">รายการของรางวัล (Items)</th>
+                                <th class="px-10 py-6 text-center">จำนวนการแลก (ครั้ง)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <template x-for="item in filteredItems()" :key="item.name + item.sys">
+                                <tr class="hover:bg-white/[0.02] transition-colors group">
+                                    <td class="px-10 py-6">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-xl" x-text="getEmoji(item.name + item.sys)"></span>
+                                            <div>
+                                                <div class="text-sm font-semibold text-gray-200 group-hover:text-blue-400 transition-colors" x-text="item.name"></div>
+                                                <div class="text-[10px] text-gray-500 font-mono mt-0.5" x-text="item.sys"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-10 py-6 text-center">
+                                        <span class="text-2xl font-bold text-emerald-400" x-text="item.count"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+
+                    <div class="bg-blue-600 px-10 py-10 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Grand Total Statistics</p>
+                            <p class="text-white text-sm opacity-80">สรุปยอดรวมการแลกเปลี่ยนทั้งหมดของช่วงเวลานี้</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-5xl font-black text-white tracking-tighter" x-text="getCurrentBox()?.total.toLocaleString()"></span>
+                            <span class="text-blue-200 font-bold ml-2 uppercase text-xs tracking-widest">Times</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function dashboard() {
+            return {
+                loading: true,
+                activeTab: '',
+                search: '',
+                rewardData: [],
+                chartInstance: null,
+                csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=0&single=true&output=csv',
+
+                async init() {
+                    await this.fetchData();
+                    this.loading = false;
+                },
+
+                getEmoji(text) {
+                    text = text.toLowerCase();
+                    if (text.includes('car') || text.includes('sup_') || text.includes('sp_')) return '🚗';
+                    if (text.includes('skin') || text.includes('weapon')) return '🔫';
+                    if (text.includes('fashion') || text.includes('set') || text.includes('pack')) return '✨';
+                    return '🎁';
+                },
+
+                async fetchData() {
+                    try {
+                        const res = await fetch(this.csvUrl + '&cb=' + Date.now());
+                        const data = await res.text();
+                        this.rewardData = this.parseCSV(data);
+                        if (this.rewardData.length > 0 && !this.activeTab) this.activeTab = this.rewardData[0].id;
+                        this.$nextTick(() => this.renderChart());
+                    } catch (e) { console.error(e); }
+                },
+
+                parseCSV(csv) {
+                    const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
+                    const boxes = {};
+                    lines.slice(1).forEach(line => {
+                        const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                        if (cols.length < 5) return;
+                        const [boxId, title, itemName, sysName, count] = cols.map(s => s.replace(/"/g, '').trim());
+                        if (!boxId) return;
+                        if (!boxes[boxId]) boxes[boxId] = { id: boxId, title: title, items: [], total: 0 };
+                        const val = parseInt(count) || 0;
+                        boxes[boxId].items.push({ name: itemName, sys: sysName, count: val });
+                        boxes[boxId].total += val;
+                    });
+                    return Object.values(boxes);
+                },
+
+                getCurrentBox() { return this.rewardData.find(b => b.id === this.activeTab); },
+
+                filteredItems() {
+                    const box = this.getCurrentBox();
+                    return box ? box.items.filter(i => i.name.toLowerCase().includes(this.search.toLowerCase()) || i.sys.toLowerCase().includes(this.search.toLowerCase())) : [];
+                },
+
+                changeTab(id) {
+                    this.activeTab = id;
+                    this.$nextTick(() => this.renderChart());
+                },
+
+                renderChart() {
+                    const box = this.getCurrentBox();
+                    if (!box) return;
+                    const ctx = document.getElementById('itemChart').getContext('2d');
+                    if (this.chartInstance) this.chartInstance.destroy();
+                    this.chartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: box.items.map(i => i.name),
+                            datasets: [{
+                                data: box.items.map(i => i.count),
+                                backgroundColor: [
+                                    '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'
+                                ],
+                                borderRadius: 12,
+                                borderSkipped: false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            indexAxis: 'y',
+                            scales: {
+                                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                                y: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Kanit', size: 12 } } }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                title: { display: true, text: 'TOP REDEEMED ITEMS', color: '#94a3b8', font: { size: 12, family: 'Kanit', weight: 'bold' }, padding: 20 }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
