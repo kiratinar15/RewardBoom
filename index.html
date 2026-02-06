@@ -11,10 +11,8 @@
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #0b0e14; color: #f1f5f9; }
         .glass-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2rem; }
-        /* ปรับแต่งแสงเรืองรองให้ตัวเลขเด่นขึ้น */
         .total-glow { 
-            text-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 80px rgba(59, 130, 246, 0.4); 
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+            text-shadow: 0 0 50px rgba(59, 130, 246, 0.9), 0 0 100px rgba(59, 130, 246, 0.5); 
         }
         [x-cloak] { display: none !important; }
         .sidebar-active { background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 100%); border-left: 4px solid #3b82f6; color: #3b82f6 !important; }
@@ -25,12 +23,12 @@
     <template x-if="currentPage === 'login'">
         <div class="min-h-screen flex items-center justify-center p-4">
             <div class="glass-card w-full max-w-md p-10 shadow-2xl text-center">
-                <div class="bg-orange-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-900/40 rotate-3">
+                <div class="bg-orange-600 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-900/40">
                     <span class="text-3xl text-white">🔐</span>
                 </div>
                 <h2 class="text-3xl font-black italic text-white tracking-tight uppercase">EXCHANGE REWARD</h2>
                 <p class="text-gray-500 mb-8 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Authorization</p>
-                <div class="space-y-4 text-left">
+                <div class="space-y-4">
                     <input type="password" x-model="passInput" placeholder="PASSWORD" class="w-full bg-[#0b0e14] border border-white/10 rounded-2xl px-4 py-4 focus:outline-none focus:ring-1 focus:ring-orange-500 text-white text-center font-bold tracking-[0.5em]">
                     <button @click="doLogin" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-orange-900/40 transition-all uppercase italic">Login System</button>
                     <button @click="currentPage = 'home'" class="w-full py-2 text-gray-600 text-[10px] hover:text-white transition-colors uppercase tracking-widest font-bold text-center">← กลับหน้าหลัก</button>
@@ -44,7 +42,7 @@
             <header class="flex justify-between items-center mb-12">
                 <div class="flex items-center space-x-4">
                     <div class="bg-orange-600 p-3 rounded-2xl text-white shadow-lg">⚙️</div>
-                    <h1 class="text-2xl font-black italic tracking-tight uppercase">Admin Control</h1>
+                    <h1 class="text-2xl font-black italic tracking-tight uppercase leading-none">EXCHANGEREWARD<br>ADMIN</h1>
                 </div>
                 <button @click="logout" class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-600 transition-all">➜ Logout</button>
             </header>
@@ -54,26 +52,18 @@
                     <h3 class="font-bold mb-6 text-orange-400 uppercase tracking-widest text-sm italic">Database Config</h3>
                     <div class="space-y-6">
                         <input type="text" x-model="csvUrl" class="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-5 py-4 text-xs font-mono text-gray-400">
-                        <button @click="saveUrl" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-2xl shadow-2xl shadow-orange-900/40 transition-all uppercase italic tracking-widest">
-                            Update Database
-                        </button>
+                        <button @click="saveUrl" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-2xl shadow-2xl shadow-orange-900/40 transition-all uppercase italic tracking-widest">Update Database</button>
                     </div>
                 </div>
 
                 <div class="glass-card p-10 border-emerald-500/20 shadow-2xl bg-emerald-500/[0.02]">
-                    <h3 class="font-bold mb-6 text-emerald-400 uppercase tracking-widest text-sm italic flex items-center">
-                        <span class="mr-2">📊</span> Google Sheets Editor
-                    </h3>
+                    <h3 class="font-bold mb-6 text-emerald-400 uppercase tracking-widest text-sm italic flex items-center"><span class="mr-2">📊</span> Google Sheets Editor</h3>
                     <div class="flex flex-col md:flex-row items-center justify-between bg-[#0b0e14] p-6 rounded-2xl border border-white/5 gap-6">
                         <div class="text-left">
-                            <p class="text-sm font-bold text-white mb-1">ต้องการแก้ไขข้อมูลใช่หรือไม่?</p>
-                            <p class="text-xs text-gray-500 italic">กดเพื่อเปิดหน้า Google Sheets สำหรับใส่ข้อมูลส่งในรอบนี้</p>
+                            <p class="text-sm font-bold text-white mb-1">แก้ไขข้อมูลใน Google Sheets</p>
+                            <p class="text-xs text-gray-500 italic">เปิดหน้าชีทเพื่อกรอกข้อมูลสรุปประจำรอบ</p>
                         </div>
-                        <a href="https://docs.google.com/spreadsheets/d/1fPWt2t4zumgImIgoBWLMyIBO-8YR19eOoCaJzbl3jNw/edit#gid=0" 
-                           target="_blank" 
-                           class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-xl transition-all">
-                            🌐 เปิด Google Sheets
-                        </a>
+                        <a href="https://docs.google.com/spreadsheets/d/1fPWt2t4zumgImIgoBWLMyIBO-8YR19eOoCaJzbl3jNw/edit#gid=0" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-xl transition-all">🌐 เปิด Google Sheets</a>
                     </div>
                 </div>
             </div>
@@ -109,37 +99,25 @@
                         <h1 class="text-lg font-bold text-white italic tracking-tight uppercase" x-text="getCurrentBox()?.title || 'Syncing...'"></h1>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." 
-                            class="bg-[#0b0e14] border border-white/10 rounded-full pl-6 pr-6 py-2 text-xs text-white w-64 focus:ring-1 focus:ring-blue-500 transition-all outline-none">
+                        <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." class="bg-[#0b0e14] border border-white/10 rounded-full pl-6 pr-6 py-2 text-xs text-white w-64 focus:ring-1 focus:ring-blue-500 transition-all outline-none">
                         <div class="h-6 w-px bg-white/10 mx-2"></div>
-                        <button @click="currentPage = 'login'" class="bg-blue-600/10 text-blue-500 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
-                            🔒 ADMIN
-                        </button>
+                        <button @click="currentPage = 'login'" class="bg-blue-600/10 text-blue-400 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">🔒 ADMIN</button>
                     </div>
                 </header>
 
                 <section class="flex-1 p-8 overflow-y-auto space-y-8 scroll-smooth">
                     
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 rounded-[2.5rem] p-12 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-[0_20px_50px_rgba(30,58,138,0.5)] border border-white/10">
-                            <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-10 font-black italic pointer-events-none uppercase tracking-tighter select-none">TOTAL</div>
-                            
-                            <div class="z-10 mb-6 md:mb-0 text-center md:text-left">
-                                <h2 class="text-white text-5xl font-black italic tracking-tighter uppercase leading-none drop-shadow-lg" x-text="getCurrentBox()?.title"></h2>
-                                <p class="text-[11px] text-blue-200 uppercase font-black tracking-[0.4em] mt-4 opacity-70">รวบรวมข้อมูลประจำรอบ</p>
-                            </div>
-
-                            <div class="text-center md:text-right z-10">
-                                <span class="text-[12rem] font-black text-white total-glow tracking-tighter block leading-none select-all" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
-                                <span class="text-blue-100 font-black uppercase text-[14px] tracking-[0.6em] italic opacity-80 mt-2 block">Redeems Collected</span>
-                            </div>
+                    <div class="w-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 rounded-[3rem] p-16 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-[0_20px_60px_rgba(30,58,138,0.6)] border border-white/10">
+                        <div class="absolute -right-10 -bottom-10 text-[25rem] opacity-10 font-black italic pointer-events-none uppercase tracking-tighter select-none">TOTAL</div>
+                        
+                        <div class="z-10 mb-8 md:mb-0 text-center md:text-left">
+                            <h2 class="text-white text-6xl font-black italic tracking-tighter uppercase leading-tight drop-shadow-2xl" x-text="getCurrentBox()?.title"></h2>
+                            <p class="text-[12px] text-blue-200 uppercase font-black tracking-[0.5em] mt-6 opacity-60">รวบรวมข้อมูลประจำรอบ</p>
                         </div>
 
-                        <div class="w-full md:w-64 glass-card p-10 flex flex-col justify-center items-center text-center relative border-blue-500/10 shadow-2xl overflow-hidden group">
-                             <div class="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-all duration-500"></div>
-                             <p class="text-[11px] text-gray-500 uppercase font-black tracking-widest mb-6 italic z-10">ITEMS COUNT</p>
-                             <div class="text-8xl font-black text-blue-500 italic z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" x-text="getCurrentBox()?.items.length || 0"></div>
-                             <p class="text-[10px] text-blue-400 font-bold mt-4 uppercase z-10 tracking-widest opacity-60">รายการทั้งหมด</p>
+                        <div class="text-center md:text-right z-10">
+                            <span class="text-[14rem] font-black text-white total-glow tracking-tighter block leading-none select-all" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
+                            <span class="text-blue-100 font-black uppercase text-[16px] tracking-[0.8em] italic opacity-80 mt-4 block">Redeems Collected</span>
                         </div>
                     </div>
 
