@@ -52,7 +52,6 @@
     </div>
 
     <div x-show="isLoggedIn" x-cloak class="flex h-screen overflow-hidden">
-        
         <aside class="w-80 bg-[#0a0a0a] border-r-4 border-black flex flex-col z-20">
             <div class="p-8">
                 <h2 class="text-2xl font-bold text-white italic tracking-wide uppercase leading-none" style="-webkit-text-stroke: 0.5px #3b82f6;">EXCHANGE<br><span class="text-blue-500">REWARD</span></h2>
@@ -101,11 +100,9 @@
                 <div class="max-w-4xl mx-auto">
                     <div class="relative pl-12 space-y-10">
                         <div class="timeline-line"></div>
-                        
                         <template x-for="(event, index) in timeline" :key="event.name">
                             <div class="relative">
                                 <div class="absolute -left-[38px] top-4 w-10 h-10 bg-black border-4 border-blue-500 rounded-full z-10 flex items-center justify-center text-xs font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]" x-text="'0'+(index+1)"></div>
-                                
                                 <div class="comic-card p-8 border-2 border-black shadow-[8px_8px_0px_#000] bg-[#161b22] hover:translate-y-[-4px] transition-transform duration-300">
                                     <div class="flex justify-between items-start mb-4">
                                         <h3 class="text-3xl font-bold text-white italic uppercase tracking-tighter" x-text="event.name"></h3>
@@ -113,8 +110,7 @@
                                               class="px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border-2 border-black" x-text="event.status"></span>
                                     </div>
                                     <div class="flex items-center text-yellow-400 font-bold text-lg italic">
-                                        <span class="mr-3">📅</span>
-                                        <span x-text="event.date"></span>
+                                        <span class="mr-3">📅</span><span x-text="event.date"></span>
                                     </div>
                                     <p class="mt-4 text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-wider">รายละเอียดช่วงเวลาการแลกของรางวัลตามที่กำหนดในกิจกรรม</p>
                                 </div>
@@ -129,13 +125,13 @@
                     <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-20 font-bold italic pointer-events-none uppercase leading-none text-black select-none">DATA</div>
                     <div class="z-10 text-center md:text-left">
                         <h2 class="text-white text-5xl font-bold italic tracking-tight uppercase drop-shadow-[3px_3px_0px_#000]" x-text="getCurrentBox()?.title"></h2>
-                        <div class="mt-6 flex items-center space-x-2">
+                        <div class="mt-6 flex items-center space-x-2" x-show="getEventDate(getCurrentBox()?.id)">
                              <span class="bg-black text-yellow-400 px-4 py-1 rounded-lg border-2 border-black text-xs font-bold italic" x-text="getEventDate(getCurrentBox()?.id)"></span>
                         </div>
                     </div>
                     <div class="text-center md:text-right z-10">
                         <span class="text-[10rem] font-bold text-white total-glow tracking-tight block leading-none" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
-                        <span class="bg-yellow-400 text-black inline-block font-bold uppercase text-[14px] italic border-2 border-black px-4 py-1 shadow-[3px_3px_0px_#000] mt-4">REDEEMS COLLECTED</span>
+                        <span class="bg-yellow-400 text-black inline-block font-bold uppercase text-[14px] italic border-2 border-black px-4 py-1 shadow-[3px_3px_0px_#000] mt-4 uppercase">REDEEMS COLLECTED</span>
                     </div>
                 </div>
 
@@ -182,7 +178,7 @@
             return {
                 isLoggedIn: false,
                 showAdminAuth: false,
-                currentPage: 'timeline', // เริ่มต้นที่หน้า Schedule เพื่อความดูง่าย
+                currentPage: 'timeline',
                 activeTab: '',
                 search: '',
                 userInput: '',
@@ -208,9 +204,10 @@
                 },
 
                 getEventDate(boxId) {
-                    // Match box IDs (box1, box2, box3) to timeline array
+                    if (!boxId) return null;
                     const index = parseInt(boxId.replace('box','')) - 1;
-                    return this.timeline[index] ? this.timeline[index].date : 'ไม่ระบุช่วงเวลา';
+                    // คืนค่า null หากหา ID ไม่เจอ เพื่อให้ x-show ทำงาน
+                    return this.timeline[index] ? this.timeline[index].date : null;
                 },
 
                 checkAuth() { if (sessionStorage.getItem('exchangeAuth') === 'true') { this.isLoggedIn = true; this.fetchData(); } },
@@ -291,4 +288,3 @@
     </script>
 </body>
 </html>
-
