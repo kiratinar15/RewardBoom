@@ -3,232 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - RewardBoom Premium</title>
+    <title>REWARD BOOM - System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #0b0e14; color: #f1f5f9; }
-        .sidebar-item.active { background: #1e293b; border-radius: 12px; color: #60a5fa; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .glass-panel { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card { background: #111827; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.5rem; }
+        .admin-stat-card { border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
         [x-cloak] { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body x-data="dashboard()">
+<body x-data="system()">
 
-    <div x-show="showLogin" class="fixed inset-0 flex items-center justify-center bg-black/90 z-[100] p-4" x-cloak x-transition>
-        <div class="bg-[#111827] p-8 rounded-[2.5rem] w-full max-w-sm border border-blue-500/20 shadow-[0_0_50px_rgba(59,130,246,0.15)]">
-            <div class="text-4xl text-center mb-4">🔐</div>
-            <h3 class="text-xl font-bold mb-6 text-center text-white">Admin Access</h3>
-            <input type="password" x-model="loginPass" placeholder="รหัสผ่าน" 
-                class="w-full bg-[#0b0e14] border border-white/10 rounded-2xl px-5 py-4 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-center">
-            <div class="flex flex-col space-y-2">
-                <button @click="doLogin" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20">เข้าสู่ระบบ</button>
-                <button @click="showLogin = false" class="w-full py-2 text-gray-500 text-sm hover:text-white transition-colors">ยกเลิก</button>
+    <template x-if="currentPage === 'login'">
+        <div class="min-h-screen flex items-center justify-center p-4 bg-[#0b0e14]">
+            <div class="glass-card w-full max-w-md p-10 shadow-2xl border-white/5">
+                <div class="flex justify-center mb-6">
+                    <div class="bg-orange-500 p-4 rounded-2xl shadow-lg shadow-orange-500/20">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                </div>
+                <h2 class="text-3xl font-bold text-center mb-2">Admin Login</h2>
+                <p class="text-gray-500 text-center mb-8 text-sm">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] text-gray-500 uppercase mb-2 block font-bold">Username</label>
+                        <input type="text" value="adminboom" class="w-full bg-[#161b22] border border-white/10 rounded-xl px-4 py-3 focus:outline-none text-white">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-500 uppercase mb-2 block font-bold">Password</label>
+                        <input type="password" x-model="passInput" placeholder="••••••" class="w-full bg-[#161b22] border border-white/10 rounded-xl px-4 py-3 focus:outline-none text-white">
+                    </div>
+                    <button @click="doLogin" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-500/30 flex items-center justify-center space-x-2 transition-all">
+                        <span>➜ เข้าสู่ระบบ</span>
+                    </button>
+                    <button @click="currentPage = 'home'" class="w-full py-2 text-gray-500 text-xs hover:text-white transition-colors italic">← กลับหน้าหลัก</button>
+                </div>
             </div>
         </div>
-    </div>
+    </template>
 
-    <div class="flex h-screen overflow-hidden">
-        
-        <aside class="w-72 bg-[#111827] border-r border-white/5 flex flex-col">
-            <div class="p-8 pb-4">
-                <div class="flex items-center space-x-3 mb-1">
-                    <div class="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/30 text-xl">💎</div>
-                    <h2 class="text-xl font-black text-white tracking-tight italic">REWARD BOOM</h2>
-                </div>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest pl-12 font-semibold">Stats Analytics v3.0</p>
-            </div>
-            
-            <nav class="flex-1 px-4 py-6 space-y-3 overflow-y-auto">
-                <template x-for="box in rewardData" :key="box.id">
-                    <button @click="changeTab(box.id)" :class="{'active': activeTab === box.id}"
-                        class="sidebar-item w-full flex flex-col px-5 py-4 text-sm text-gray-400 hover:bg-white/5 transition-all group">
-                        <div class="flex justify-between w-full mb-1">
-                            <span class="text-[10px] font-bold opacity-50" x-text="box.id.toUpperCase()"></span>
-                            <span class="text-blue-400 font-mono text-xs" x-text="box.total + ' แลก'"></span>
-                        </div>
-                        <div class="text-left truncate w-full font-medium" x-text="box.title"></div>
-                    </button>
-                </template>
-            </nav>
-        </aside>
-
-        <main class="flex-1 flex flex-col overflow-hidden">
-            
-            <header class="bg-[#111827] px-8 py-5 flex justify-between items-center border-b border-white/5 z-50">
+    <template x-if="currentPage === 'admin'">
+        <div class="min-h-screen p-8 max-w-5xl mx-auto">
+            <header class="flex justify-between items-center mb-8">
                 <div class="flex items-center space-x-4">
-                    <h1 class="text-lg font-bold text-white" x-text="getCurrentBox()?.title || 'Loading...'"></h1>
+                    <div class="bg-orange-500 p-2 rounded-lg shadow-lg shadow-orange-500/20">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold italic">Admin Panel</h1>
+                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">ยินดีต้อนรับ: adminboom</p>
+                    </div>
                 </div>
-                
-                <div class="flex items-center space-x-6">
-                    <div class="relative">
-                        <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." 
-                            class="bg-[#0b0e14] border border-white/5 rounded-full px-6 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-64 text-white placeholder-gray-600 transition-all">
+                <button @click="logout" class="bg-gray-800 px-4 py-2 rounded-lg text-xs font-bold hover:bg-red-600 transition-all flex items-center space-x-2">
+                    <span>➜ Logout</span>
+                </button>
+            </header>
+
+            <div class="grid grid-cols-1 gap-6">
+                <div class="glass-card p-8 border-white/5">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold flex items-center space-x-2 text-sm uppercase tracking-wider"><span>📊</span> <span>สถิติรวมจากระบบ</span></h3>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold italic">Online</span>
                     </div>
                     
-                    <div class="h-6 w-px bg-white/10"></div>
-                    
-                    <div class="flex items-center space-x-3">
-                        <template x-if="!isAdmin">
-                            <button @click="showLogin = true" class="px-4 py-2 bg-blue-600/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
-                                🔒 แอดมินล็อคอิน
-                            </button>
-                        </template>
-                        <template x-if="isAdmin">
-                            <div class="flex items-center space-x-2">
-                                <button @click="showSettings = !showSettings" class="px-5 py-2 bg-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition-all">
-                                    ⚙️ ตั้งค่า CSV ลิงก์
-                                </button>
-                                <button @click="isAdmin = false" class="p-2 text-gray-500 hover:text-red-400 transition-colors" title="ออกจากระบบ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                                </button>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <template x-for="box in rewardData.slice(0, 4)">
+                            <div class="admin-stat-card bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer border-white/5">
+                                <p class="text-[10px] text-gray-500 mb-2 uppercase" x-text="box.id"></p>
+                                <p class="text-3xl font-black text-blue-400" x-text="box.total"></p>
                             </div>
                         </template>
                     </div>
-                </div>
-            </header>
 
-            <div x-show="showSettings && isAdmin" x-transition class="bg-blue-600 p-6 shadow-2xl" x-cloak>
-                <div class="max-w-4xl mx-auto flex flex-col space-y-3">
-                    <div class="flex justify-between items-center">
-                        <label class="text-xs font-black text-white uppercase tracking-widest">เชื่อมต่อ Google Sheet (CSV)</label>
-                        <button @click="showSettings = false" class="text-white/50 hover:text-white">✕</button>
+                    <div class="space-y-3 pt-6 border-t border-white/5">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">จำนวน Box ทั้งหมดในระบบ</span>
+                            <span class="text-white font-bold" x-text="rewardData.length + ' ชุด'"></span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-500">รายการที่ถูกค้นหาบ่อยที่สุด</span>
+                            <span class="text-emerald-400 font-bold">sp_mininap</span>
+                        </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <input type="text" x-model="tempUrl" placeholder="วางลิงก์ CSV ที่นี่..." 
-                            class="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none placeholder-white/30">
-                        <button @click="saveSettings" class="bg-white text-blue-600 px-8 py-3 rounded-xl text-sm font-bold hover:bg-blue-50 transition-all shadow-xl">อัปเดตข้อมูล</button>
+                </div>
+
+                <div class="glass-card p-8 border-orange-500/20">
+                    <h3 class="font-bold mb-6 flex items-center space-x-2 text-orange-400 text-sm italic"><span>🔗</span> <span>Link Google Sheets เพื่อแก้ไขข้อมูล</span></h3>
+                    <div class="flex flex-col space-y-4">
+                        <input type="text" x-model="csvUrl" class="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-3 text-xs text-gray-400 font-mono focus:ring-1 focus:ring-orange-500 transition-all">
+                        <button @click="saveUrl" class="bg-orange-500/10 text-orange-500 border border-orange-500/30 w-full py-4 rounded-xl font-bold hover:bg-orange-500 hover:text-white transition-all flex items-center justify-center space-x-2">
+                            <span>💾 อัปเดตแหล่งข้อมูล Google Sheets</span>
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+    </template>
 
-            <section class="flex-1 p-8 overflow-y-auto space-y-8 bg-[#0b0e14]">
-                <div x-show="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
-                    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-blue-500"></div>
-                    <span class="text-sm text-gray-500 animate-pulse">กำลังประมวลผลข้อมูล...</span>
+    <template x-if="currentPage === 'home'">
+        <div class="flex h-screen overflow-hidden">
+            <aside class="w-72 bg-[#111827] border-r border-white/5 flex flex-col">
+                <div class="p-8">
+                    <h2 class="text-xl font-black text-blue-500 italic tracking-tighter">REWARD BOOM</h2>
+                    <p class="text-[10px] text-gray-600 uppercase font-bold tracking-[0.2em] mt-1">Analytics Dashboard</p>
                 </div>
+                
+                <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+                    <template x-for="box in rewardData" :key="box.id">
+                        <button @click="changeTab(box.id)" 
+                            :class="activeTab === box.id ? 'bg-blue-600/10 text-blue-400 border-l-4 border-blue-500' : 'text-gray-500 hover:bg-white/5'"
+                            class="w-full flex flex-col px-5 py-4 text-sm rounded-xl transition-all">
+                            <div class="flex justify-between w-full mb-1">
+                                <span class="text-[10px] font-bold opacity-50 uppercase" x-text="box.id"></span>
+                                <span class="text-xs font-mono" x-text="box.total"></span>
+                            </div>
+                            <div class="text-left truncate w-full font-medium" x-text="box.title"></div>
+                        </button>
+                    </template>
+                </nav>
 
-                <div x-show="!loading" class="grid grid-cols-1 gap-8 animate-in fade-in duration-500">
-                    
-                    <div class="glass-panel rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500 opacity-50"></div>
-                        <div style="height: 380px;">
-                            <canvas id="itemChart"></canvas>
-                        </div>
+                <div class="p-6 border-t border-white/5">
+                    <button @click="currentPage = 'login'" class="w-full bg-white/5 text-gray-500 py-3 rounded-xl text-xs font-bold hover:bg-white/10 hover:text-white transition-all">
+                        🔒 Admin Login
+                    </button>
+                </div>
+            </aside>
+
+            <main class="flex-1 flex flex-col bg-[#0b0e14]">
+                <header class="bg-[#111827] px-8 py-5 flex justify-between items-center border-b border-white/5 shadow-xl">
+                    <h1 class="text-lg font-bold text-white italic" x-text="getCurrentBox()?.title || 'Loading...'"></h1>
+                    <div class="relative">
+                        <input type="text" x-model="search" placeholder="ค้นหาไอเทม..." class="bg-[#0b0e14] border border-white/10 rounded-full px-6 py-2 text-sm text-white w-72 focus:ring-1 focus:ring-blue-500 transition-all shadow-inner">
                     </div>
+                </header>
 
-                    <div class="glass-panel rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <section class="flex-1 p-8 overflow-y-auto space-y-8">
+                    <div class="glass-card p-8 shadow-2xl"><div style="height: 350px;"><canvas id="itemChart"></canvas></div></div>
+                    
+                    <div class="glass-card overflow-hidden shadow-2xl border-white/5">
                         <table class="w-full text-left">
-                            <thead class="bg-white/[0.03]">
-                                <tr class="text-gray-500 text-[10px] uppercase tracking-[0.25em]">
-                                    <th class="px-10 py-6 font-bold">REWARD ITEM LIST</th>
-                                    <th class="px-10 py-6 text-center font-bold">REDEEM COUNT</th>
+                            <thead class="bg-white/[0.03] border-b border-white/5">
+                                <tr class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
+                                    <th class="px-8 py-5">REWARD ITEM (Vehicle/Skin)</th>
+                                    <th class="px-8 py-5 text-center">REDEEM COUNT</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-white/5">
                                 <template x-for="item in filteredItems()" :key="item.name + item.sys">
-                                    <tr class="hover:bg-blue-500/[0.03] transition-colors group">
-                                        <td class="px-10 py-6">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl shadow-inner group-hover:bg-blue-600/10 transition-all" x-text="getEmoji(item.name + item.sys)"></div>
-                                                <div>
-                                                    <div class="text-sm font-bold text-gray-100 group-hover:text-blue-400 transition-colors" x-text="item.name"></div>
-                                                    <div class="text-[10px] text-gray-600 font-mono mt-0.5 uppercase tracking-widest" x-text="item.sys"></div>
-                                                </div>
-                                            </div>
+                                    <tr class="hover:bg-blue-500/5 transition-colors group">
+                                        <td class="px-8 py-5">
+                                            <div class="text-sm font-bold text-gray-200 group-hover:text-white transition-colors" x-text="item.name"></div>
+                                            <div class="text-[10px] text-gray-600 font-mono mt-0.5 uppercase tracking-tighter" x-text="item.sys"></div>
                                         </td>
-                                        <td class="px-10 py-6 text-center">
-                                            <span class="text-2xl font-black text-white font-mono group-hover:text-emerald-400 transition-colors" x-text="item.count"></span>
-                                        </td>
+                                        <td class="px-8 py-5 text-center text-xl font-black text-emerald-400 font-mono" x-text="item.count"></td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
                         
-                        <div class="bg-gradient-to-br from-blue-600 to-blue-800 px-12 py-12 flex justify-between items-center relative overflow-hidden">
-                            <div class="absolute -right-10 -bottom-10 text-[10rem] opacity-10 pointer-events-none">📊</div>
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-10 flex justify-between items-center relative overflow-hidden">
+                            <div class="absolute -right-5 -bottom-5 text-[10rem] opacity-10 font-black italic">TOTAL</div>
                             <div class="z-10">
-                                <p class="text-[10px] text-blue-200 uppercase tracking-[0.3em] font-black mb-1">Total Summary</p>
-                                <h3 class="text-white text-lg font-bold opacity-90" x-text="getCurrentBox()?.title"></h3>
+                                <p class="text-[10px] text-blue-200 uppercase font-black tracking-widest mb-1">Grand Total Statistics</p>
+                                <h3 class="text-white text-lg font-bold opacity-80" x-text="getCurrentBox()?.title"></h3>
                             </div>
-                            <div class="text-right z-10">
-                                <span class="text-7xl font-black text-white tracking-tighter drop-shadow-2xl" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
-                                <span class="text-blue-100 font-black ml-2 uppercase text-xs tracking-widest">Redeems</span>
+                            <div class="text-right z-10 flex items-baseline space-x-2">
+                                <span class="text-7xl font-black text-white tracking-tighter" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
+                                <span class="text-blue-100 font-black uppercase text-[10px] tracking-widest">TIMES</span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
-    </div>
+                </section>
+            </main>
+        </div>
+    </template>
 
     <script>
-        function dashboard() {
+        function system() {
             return {
-                loading: true,
+                currentPage: 'home', // 'home', 'login', 'admin'
                 activeTab: '',
                 search: '',
+                passInput: '',
                 rewardData: [],
-                chartInstance: null,
-                isAdmin: false,
-                showLogin: false,
-                showSettings: false,
-                loginPass: '',
-                masterPassword: '123', // *** รหัสผ่านของคุณ ***
-                tempUrl: '',
                 csvUrl: localStorage.getItem('rewardCsvUrl') || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=0&single=true&output=csv',
+                chartInstance: null,
 
                 async init() {
-                    this.tempUrl = this.csvUrl;
                     await this.fetchData();
-                    this.loading = false;
                 },
 
                 doLogin() {
-                    if (this.loginPass === this.masterPassword) {
-                        this.isAdmin = true;
-                        this.showLogin = false;
-                        this.loginPass = '';
+                    if (this.passInput === '123') { // รหัสผ่านเดิม
+                        this.currentPage = 'admin';
+                        this.passInput = '';
                     } else {
                         alert('รหัสผ่านไม่ถูกต้อง');
                     }
                 },
 
-                saveSettings() {
-                    if (!this.tempUrl.includes('output=csv')) {
-                        alert('ลิงก์ต้องลงท้ายด้วย output=csv');
+                logout() { this.currentPage = 'home'; },
+
+                saveUrl() {
+                    if(!this.csvUrl.includes('output=csv')) {
+                        alert('ลิงก์ต้องลงท้ายด้วย output=csv นะครับ');
                         return;
                     }
-                    localStorage.setItem('rewardCsvUrl', this.tempUrl);
-                    this.csvUrl = this.tempUrl;
-                    this.fetchData();
-                    this.showSettings = false;
-                },
-
-                getEmoji(text) {
-                    text = text.toLowerCase();
-                    if (text.includes('car') || text.includes('sup_') || text.includes('sp_')) return '🚗';
-                    if (text.includes('skin') || text.includes('weapon')) return '🔫';
-                    if (text.includes('fashion') || text.includes('set') || text.includes('pack')) return '✨';
-                    return '🎁';
+                    localStorage.setItem('rewardCsvUrl', this.csvUrl);
+                    location.reload();
                 },
 
                 async fetchData() {
-                    this.loading = true;
                     try {
                         const res = await fetch(this.csvUrl + '&cb=' + Date.now());
                         const data = await res.text();
                         this.rewardData = this.parseCSV(data);
                         if (this.rewardData.length > 0) {
                             if (!this.activeTab) this.activeTab = this.rewardData[0].id;
+                            this.$nextTick(() => this.renderChart());
                         }
-                        this.$nextTick(() => this.renderChart());
-                    } catch (e) { console.error(e); }
-                    this.loading = false;
+                    } catch (e) { console.error("Fetch Error:", e); }
                 },
 
                 parseCSV(csv) {
@@ -248,33 +246,31 @@
                 },
 
                 getCurrentBox() { return this.rewardData.find(b => b.id === this.activeTab); },
-
-                filteredItems() {
+                
+                filteredItems() { 
                     const box = this.getCurrentBox();
-                    return box ? box.items.filter(i => i.name.toLowerCase().includes(this.search.toLowerCase()) || i.sys.toLowerCase().includes(this.search.toLowerCase())) : [];
+                    return box ? box.items.filter(i => i.name.toLowerCase().includes(this.search.toLowerCase())) : [];
                 },
-
-                changeTab(id) {
-                    this.activeTab = id;
-                    this.$nextTick(() => this.renderChart());
+                
+                changeTab(id) { 
+                    this.activeTab = id; 
+                    this.$nextTick(() => this.renderChart()); 
                 },
 
                 renderChart() {
                     const box = this.getCurrentBox();
                     if (!box) return;
-                    const canvas = document.getElementById('itemChart');
-                    if (!canvas) return;
-                    const ctx = canvas.getContext('2d');
+                    const ctx = document.getElementById('itemChart').getContext('2d');
                     if (this.chartInstance) this.chartInstance.destroy();
                     this.chartInstance = new Chart(ctx, {
                         type: 'bar',
                         data: {
                             labels: box.items.map(i => i.name),
                             datasets: [{
+                                label: 'จำนวนครั้ง',
                                 data: box.items.map(i => i.count),
-                                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'],
+                                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
                                 borderRadius: 10,
-                                borderSkipped: false,
                                 barThickness: 25
                             }]
                         },
@@ -283,13 +279,10 @@
                             maintainAspectRatio: false,
                             indexAxis: 'y',
                             scales: {
-                                x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
-                                y: { grid: { display: false }, ticks: { color: '#fff', font: { family: 'Kanit', size: 12 } } }
+                                x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b' } },
+                                y: { grid: { display: false }, ticks: { color: '#f1f5f9', font: { family: 'Kanit', size: 12 } } }
                             },
-                            plugins: {
-                                legend: { display: false },
-                                title: { display: true, text: 'TOP ITEM PERFORMANCE', color: '#475569', font: { size: 10, family: 'Kanit', weight: 'bold' }, padding: { bottom: 20 } }
-                            }
+                            plugins: { legend: { display: false } }
                         }
                     });
                 }
