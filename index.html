@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>exchangeReward - Dynamic Timeline</title>
+    <title>exchangeReward - Professional Timeline</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,16 +26,16 @@
         <div class="comic-card w-full max-w-md p-10 shadow-2xl border-orange-500 text-center bg-[#1a1a1a]">
             <div class="bg-yellow-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-black shadow-[4px_4px_0px_#000] -rotate-6 text-3xl">🛡️</div>
             <h2 class="text-4xl font-bold italic text-yellow-400 uppercase mb-2 leading-none" style="-webkit-text-stroke: 1px black;">System Login</h2>
-            <div class="space-y-4 text-left mt-8 font-bold">
+            <div class="space-y-4 text-left mt-8">
                 <div>
-                    <label class="text-[10px] text-gray-400 uppercase tracking-widest mb-1 ml-1 block">Username</label>
-                    <input type="text" x-model="userInput" placeholder="USER ID" class="w-full bg-white border-2 border-black rounded-xl px-4 py-3 focus:outline-none text-black uppercase shadow-[3px_3px_0px_#000]">
+                    <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 ml-1 block">Username</label>
+                    <input type="text" x-model="userInput" placeholder="USER ID" class="w-full bg-white border-2 border-black rounded-xl px-4 py-3 focus:outline-none text-black font-bold shadow-[3px_3px_0px_#000] uppercase">
                 </div>
                 <div>
-                    <label class="text-[10px] text-gray-400 uppercase tracking-widest mb-1 ml-1 block">Password</label>
-                    <input type="password" x-model="passInput" @keyup.enter="login()" placeholder="••••••••" class="w-full bg-white border-2 border-black rounded-xl px-4 py-3 focus:outline-none text-black shadow-[3px_3px_0px_#000] tracking-[0.4em]">
+                    <label class="text-[10px] text-gray-400 uppercase font-bold mb-1 ml-1 block">Password</label>
+                    <input type="password" x-model="passInput" @keyup.enter="login()" placeholder="••••••••" class="w-full bg-white border-2 border-black rounded-xl px-4 py-3 focus:outline-none text-black font-bold shadow-[3px_3px_0px_#000] tracking-[0.4em]">
                 </div>
-                <button @click="login()" class="w-full bg-red-600 hover:bg-red-500 text-white py-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_#000] transition-all uppercase italic text-lg mt-4">AUTHORIZE ➜</button>
+                <button @click="login()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_#000] transition-all uppercase italic text-lg mt-4">AUTHORIZE ➜</button>
             </div>
         </div>
     </div>
@@ -52,20 +52,17 @@
     </div>
 
     <div x-show="isLoggedIn" x-cloak class="flex h-screen overflow-hidden">
-        
         <aside class="w-80 bg-[#0a0a0a] border-r-4 border-black flex flex-col z-20">
             <div class="p-8">
                 <h2 class="text-2xl font-bold text-white italic tracking-wide uppercase leading-none" style="-webkit-text-stroke: 0.5px #3b82f6;">EXCHANGE<br><span class="text-blue-500">REWARD</span></h2>
                 <div class="h-1 w-12 bg-red-600 mt-4 border-2 border-black"></div>
             </div>
-
             <nav class="flex-1 px-4 py-2 space-y-3 overflow-y-auto">
                 <button @click="currentPage = 'timeline'" 
                     :class="currentPage === 'timeline' ? 'sidebar-active text-white' : 'text-yellow-500 hover:bg-white/5 border-2 border-dashed border-yellow-500/20'"
                     class="w-full flex items-center px-5 py-4 rounded-xl transition-all duration-200 mb-6 font-bold uppercase italic text-sm tracking-widest">
                     <span class="text-lg mr-3">📅</span>Event Schedule
                 </button>
-
                 <p class="px-5 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em] mb-2 italic">Data Reports</p>
                 <template x-for="box in rewardData" :key="box.id">
                     <button @click="changeTab(box.id)" 
@@ -78,21 +75,20 @@
                     </button>
                 </template>
             </nav>
-
             <div class="p-6 border-t-2 border-black bg-[#0a0a0a]">
                 <button @click="requestAdminAccess()" class="w-full bg-yellow-400 text-black py-3 rounded-xl border-2 border-black font-bold text-xs shadow-[3px_3px_0px_#000] hover:bg-yellow-300 transition-all uppercase italic">⚙️ Admin Control</button>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col bg-[#050505]">
-            <header class="bg-[#111827] px-8 py-5 flex justify-between items-center border-b-4 border-black shadow-xl z-30 font-bold">
-                <div class="flex items-center space-x-3 italic">
+            <header class="bg-[#111827] px-8 py-5 flex justify-between items-center border-b-4 border-black shadow-xl z-30">
+                <div class="flex items-center space-x-3 italic font-bold">
                     <div class="w-3 h-3 bg-red-600 border-2 border-black rotate-45"></div>
                     <h1 class="text-lg text-white uppercase tracking-wide" x-text="getPageTitle()"></h1>
                 </div>
-                <div class="flex items-center space-x-4 uppercase text-xs">
+                <div class="flex items-center space-x-4 uppercase font-bold text-xs">
                     <template x-if="currentPage === 'home'"><input type="text" x-model="search" placeholder="SEARCH ITEM..." class="bg-white border-2 border-black rounded-lg px-6 py-2 text-black w-64 shadow-[2px_2px_0px_#000]"></template>
-                    <button @click="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-red-500 italic font-bold">➜ LOGOUT</button>
+                    <button @click="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-red-500 italic">➜ LOGOUT</button>
                 </div>
             </header>
 
@@ -105,8 +101,11 @@
                                 <div class="absolute -left-[38px] top-4 w-10 h-10 bg-black border-4 border-blue-500 rounded-full z-10 flex items-center justify-center text-xs font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]" x-text="'0'+(index+1)"></div>
                                 <div class="comic-card p-8 border-2 border-black shadow-[8px_8px_0px_#000] bg-[#161b22] hover:translate-y-[-4px] transition-transform duration-300 font-bold">
                                     <div class="flex justify-between items-start mb-4 uppercase italic">
-                                        <h3 class="text-3xl text-white tracking-tighter" x-text="event.name"></h3>
-                                        <span :class="event.status.toLowerCase().includes('active') ? 'bg-green-600 text-white shadow-[0_0_10px_rgba(22,163,74,0.5)]' : 'bg-gray-700 text-gray-400'" 
+                                        <div>
+                                            <h3 class="text-3xl text-white tracking-tighter" x-text="event.name.split('\n')[0]"></h3>
+                                            <p class="text-sm text-blue-400 font-bold tracking-widest mt-1 opacity-90" x-text="event.name.split('\n')[1]"></p>
+                                        </div>
+                                        <span :class="event.status === 'Ended' ? 'bg-gray-700 text-gray-400' : 'bg-green-600 text-white'" 
                                               class="px-4 py-1 rounded-full text-[10px] border-2 border-black" x-text="event.status"></span>
                                     </div>
                                     <div class="flex items-center text-yellow-400 text-lg italic"><span class="mr-3">📅</span><span x-text="event.date"></span></div>
@@ -119,7 +118,7 @@
 
             <section x-show="currentPage === 'home'" class="flex-1 p-8 overflow-y-auto space-y-10">
                 <div class="w-full bg-red-600 rounded-[2rem] p-12 flex flex-col md:flex-row justify-between items-center relative overflow-hidden border-4 border-black shadow-[10px_10px_0px_#000]">
-                    <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-20 font-bold italic pointer-events-none uppercase leading-none text-black select-none">TOTAL</div>
+                    <div class="absolute -right-10 -bottom-10 text-[20rem] opacity-20 font-bold italic pointer-events-none uppercase leading-none text-black select-none">DATA</div>
                     <div class="z-10 text-center md:text-left">
                         <h2 class="text-white text-5xl font-bold italic tracking-tight uppercase drop-shadow-[3px_3px_0px_#000]" x-text="getCurrentBox()?.title"></h2>
                         <div class="mt-6 flex items-center space-x-2" x-show="getEventDate(getCurrentBox()?.id)">
@@ -131,16 +130,15 @@
                         <span class="bg-yellow-400 text-black inline-block font-bold uppercase text-[14px] italic border-2 border-black px-4 py-1 shadow-[3px_3px_0px_#000] mt-4">REDEEMS COLLECTED</span>
                     </div>
                 </div>
-                <div class="comic-card overflow-hidden shadow-[8px_8px_0px_#000] border-black border-2"><table class="w-full text-left font-bold"><thead class="bg-blue-600 border-b-2 border-black uppercase text-white italic tracking-wider text-[11px]"><tr><th class="px-10 py-5">Reward List</th><th class="px-10 py-5 text-center bg-yellow-400 text-black border-l-2 border-black w-44 uppercase font-sans">Collected</th></tr></thead><tbody class="divide-y-2 divide-black bg-[#161b22]"><template x-for="item in filteredItems()" :key="item.name + item.sys"><tr class="hover:bg-white/5 transition-colors font-bold group"><td class="px-10 py-6 border-r-2 border-black"><div class="text-xl font-bold text-white uppercase italic group-hover:text-blue-400" x-text="item.name"></div><div class="text-[10px] text-yellow-500 font-mono mt-1 opacity-80 uppercase tracking-tighter" x-text="item.sys"></div></td><td class="px-10 py-6 text-center text-5xl font-bold text-white italic drop-shadow-[2px_2px_0px_#000]" x-text="item.count"></td></tr></template></tbody></table></div>
-                <div class="comic-card p-10 shadow-[8px_8px_0px_#000] border-black border-2 bg-[#0a0a0a]"><h3 class="text-lg font-bold uppercase text-yellow-400 italic mb-8 tracking-widest leading-none font-sans">📊 PERFORMANCE ANALYSIS</h3><div style="height: 450px;"><canvas id="itemChart"></canvas></div></div>
+                <div class="comic-card overflow-hidden shadow-[8px_8px_0px_#000] border-black border-2"><table class="w-full text-left font-bold"><thead class="bg-blue-600 border-b-2 border-black uppercase text-white italic tracking-wider text-[11px]"><tr><th class="px-10 py-5">Reward List</th><th class="px-10 py-5 text-center bg-yellow-400 text-black border-l-2 border-black w-44 uppercase">Collected</th></tr></thead><tbody class="divide-y-2 divide-black bg-[#161b22]"><template x-for="item in filteredItems()" :key="item.name + item.sys"><tr class="hover:bg-white/5 transition-colors font-bold group"><td class="px-10 py-6 border-r-2 border-black"><div class="text-xl font-bold text-white uppercase italic group-hover:text-blue-400" x-text="item.name"></div><div class="text-[10px] text-yellow-500 font-mono mt-1 opacity-80 uppercase tracking-tighter" x-text="item.sys"></div></td><td class="px-10 py-6 text-center text-5xl font-bold text-white italic drop-shadow-[2px_2px_0px_#000]" x-text="item.count"></td></tr></template></tbody></table></div>
+                <div class="comic-card p-10 shadow-[8px_8px_0px_#000] border-black border-2 bg-[#0a0a0a]"><h3 class="text-lg font-bold uppercase text-yellow-400 italic mb-8 tracking-widest leading-none">📊 PERFORMANCE ANALYSIS</h3><div style="height: 450px;"><canvas id="itemChart"></canvas></div></div>
             </section>
 
             <section x-show="currentPage === 'admin'" class="flex-1 p-8 overflow-y-auto space-y-8 font-bold" x-cloak>
                 <div class="max-w-4xl mx-auto space-y-8">
                     <button @click="currentPage = 'home'" class="text-blue-400 uppercase text-sm hover:underline italic">← Back to Dashboard</button>
-                    <div class="comic-card p-10 border-blue-500 bg-[#161b22] shadow-[8px_8px_0px_#000] border-2 border-black font-bold">
-                        <h3 class="font-bold mb-6 text-blue-400 uppercase text-lg italic tracking-widest font-sans">Database Config</h3>
-                        <p class="text-xs text-gray-400 mb-2 uppercase">Reward CSV URL:</p>
+                    <div class="comic-card p-10 border-blue-500 bg-[#161b22] shadow-[8px_8px_0px_#000] border-2 border-black">
+                        <h3 class="font-bold mb-6 text-blue-400 uppercase text-lg italic tracking-widest">Database Config</h3>
                         <input type="text" x-model="csvUrl" class="w-full bg-white border-2 border-black rounded-xl px-5 py-4 text-xs font-mono text-black mb-4">
                         <button @click="saveUrl" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-5 rounded-xl border-2 border-black shadow-[4px_4px_0px_#000] uppercase italic text-lg transition-all">Save & Update</button>
                     </div>
@@ -174,11 +172,26 @@
                 masterPassword: '1150',
                 adminPassword: '1112',
                 rewardData: [],
-                timeline: [], // เก็บข้อมูล Timeline จาก Sheet
                 csvUrl: localStorage.getItem('rewardCsvUrl') || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=0&single=true&output=csv',
-                // ลิงก์ Timeline ที่คุณส่งมา
-                timelineUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=1104835577&single=true&output=csv',
                 chartInstance: null,
+
+                timeline: [
+                    { 
+                        name: 'Powerpufffly 1\nwb_box0, wb_box1', 
+                        date: '3 ตุลาคม 2025 - 7 พฤศจิกายน 2568', 
+                        status: 'Ended' 
+                    },
+                    { 
+                        name: 'Powerpufffly 2\nwb_box2', 
+                        date: '1 ธันวาคม 2025 - 18 มกราคม 2569', 
+                        status: 'Ended' 
+                    },
+                    { 
+                        name: 'Powerpufffly 3\nwb_box3', 
+                        date: '5 - 8 กุมภาพันธ์ 2569', 
+                        status: 'Active' 
+                    }
+                ],
 
                 getPageTitle() {
                     if (this.currentPage === 'timeline') return 'EVENT SCHEDULE';
@@ -187,9 +200,9 @@
                 },
 
                 getEventDate(boxId) {
-                    if (!boxId || this.timeline.length === 0) return null;
-                    const event = this.timeline.find(t => t.id === boxId);
-                    return event ? event.date : null;
+                    if (!boxId) return null;
+                    const index = parseInt(boxId.replace('box','')) - 1;
+                    return this.timeline[index] ? this.timeline[index].date : null;
                 },
 
                 checkAuth() { if (sessionStorage.getItem('exchangeAuth') === 'true') { this.isLoggedIn = true; this.fetchData(); } },
@@ -207,34 +220,17 @@
                 },
                 logout() { this.isLoggedIn = false; sessionStorage.removeItem('exchangeAuth'); this.currentPage = 'timeline'; },
                 saveUrl() { localStorage.setItem('rewardCsvUrl', this.csvUrl); location.reload(); },
-
                 async fetchData() {
                     try {
-                        // 1. ดึงข้อมูล Timeline
-                        const tRes = await fetch(this.timelineUrl + '&cb=' + Date.now());
-                        const tText = await tRes.text();
-                        this.timeline = this.parseTimelineCSV(tText);
-
-                        // 2. ดึงข้อมูลรางวัล
                         const res = await fetch(this.csvUrl + '&cb=' + Date.now());
                         const data = await res.text();
                         this.rewardData = this.parseCSV(data);
-                        
                         if (this.rewardData.length > 0) {
                             if (!this.activeTab) this.activeTab = this.rewardData[0].id;
                             this.$nextTick(() => this.renderChart());
                         }
-                    } catch (e) { console.error('Fetch Error:', e); }
+                    } catch (e) { console.error(e); }
                 },
-
-                parseTimelineCSV(csv) {
-                    const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
-                    return lines.slice(1).map(line => {
-                        const [id, name, date, status] = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/"/g, '').trim());
-                        return { id, name, date, status };
-                    });
-                },
-
                 parseCSV(csv) {
                     const lines = csv.split(/\r?\n/).filter(l => l.trim() !== '');
                     const boxes = {};
@@ -249,7 +245,6 @@
                     });
                     return Object.values(boxes);
                 },
-
                 getCurrentBox() { return this.rewardData.find(b => b.id === this.activeTab); },
                 filteredItems() { 
                     const box = this.getCurrentBox();
