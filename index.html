@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Reward Stats</title>
+    <title>Admin Dashboard - RewardBoom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,92 +17,119 @@
 </head>
 <body x-data="dashboard()">
 
-    <div x-show="loading" class="fixed inset-0 flex items-center justify-center bg-[#0f172a] z-50">
-        <div class="text-center">
-            <div class="animate-bounce mb-4 text-4xl">🎁</div>
-            <p class="text-blue-400 animate-pulse text-sm uppercase tracking-widest">กำลังดึงข้อมูล...</p>
+    <div x-show="showLogin" class="fixed inset-0 flex items-center justify-center bg-black/80 z-[60] p-4" x-cloak>
+        <div class="bg-[#1e293b] p-8 rounded-3xl w-full max-w-sm border border-white/10 shadow-2xl">
+            <h3 class="text-xl font-bold mb-6 text-center text-blue-400">Admin Login</h3>
+            <input type="password" x-model="loginPass" placeholder="Enter Password" 
+                class="w-full bg-[#0f172a] border border-white/10 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+            <div class="flex space-x-2">
+                <button @click="showLogin = false" class="flex-1 px-4 py-2 text-gray-400 hover:text-white transition-colors">Cancel</button>
+                <button @click="doLogin" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition-all shadow-lg shadow-blue-900/20">Login</button>
+            </div>
         </div>
     </div>
 
-    <div class="flex h-screen overflow-hidden" x-cloak x-show="!loading">
+    <div class="flex h-screen overflow-hidden">
         <div class="w-80 bg-[#1e293b] border-r border-white/5 flex flex-col shadow-2xl">
             <div class="p-8">
                 <div class="flex items-center space-x-3 mb-2">
                     <span class="text-2xl">📊</span>
-                    <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">DASHBOARD</h2>
+                    <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">REWARD BOOM</h2>
                 </div>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Server Statistics v2.0</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Server Statistics v2.5</p>
             </div>
             
             <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
                 <template x-for="box in rewardData" :key="box.id">
-                    <button @click="changeTab(box.id)" 
-                        :class="{'active': activeTab === box.id}"
-                        class="sidebar-item w-full flex flex-col px-5 py-4 text-sm text-gray-400 hover:bg-white/5 rounded-2xl transition-all duration-300">
+                    <button @click="changeTab(box.id)" :class="{'active': activeTab === box.id}"
+                        class="sidebar-item w-full flex flex-col px-5 py-4 text-sm text-gray-400 hover:bg-white/5 rounded-2xl transition-all duration-300 group">
                         <div class="flex justify-between w-full mb-1">
                             <span class="text-[10px] opacity-60" x-text="'ID: ' + box.id"></span>
-                            <span class="text-emerald-400 font-mono" x-text="box.total"></span>
+                            <span class="text-emerald-400 font-mono group-hover:scale-110 transition-transform" x-text="box.total"></span>
                         </div>
                         <div class="text-left truncate w-full" x-text="'📅 ' + box.title"></div>
                     </button>
                 </template>
             </nav>
+
+            <div class="p-6 border-t border-white/5">
+                <button x-show="!isAdmin" @click="showLogin = true" class="w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 py-3 rounded-xl text-xs text-gray-400 transition-all">
+                    <span>🔒 Admin Login</span>
+                </button>
+                <div x-show="isAdmin" class="space-y-4">
+                    <div class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Admin Mode Active</div>
+                    <button @click="showSettings = !showSettings" class="w-full bg-blue-600/20 text-blue-400 border border-blue-600/30 py-2 rounded-lg text-xs font-bold">
+                        Settings (CSV Link)
+                    </button>
+                    <button @click="isAdmin = false" class="w-full text-gray-500 text-[10px] hover:text-red-400 underline transition-colors">Logout</button>
+                </div>
+            </div>
         </div>
 
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-[#1e293b]/50 px-8 py-6 flex justify-between items-center border-b border-white/5">
-                <div>
-                    <h1 class="text-2xl font-bold text-white flex items-center" x-text="getCurrentBox()?.title"></h1>
+        <main class="flex-1 flex flex-col overflow-hidden bg-[#0f172a]">
+            <div x-show="showSettings && isAdmin" class="bg-blue-600/10 border-b border-blue-500/20 p-6 flex flex-col space-y-3" x-cloak>
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-widest">Google Sheet CSV URL</label>
+                <div class="flex space-x-3">
+                    <input type="text" x-model="tempUrl" placeholder="Paste CSV URL here..." 
+                        class="flex-1 bg-[#1e293b] border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none">
+                    <button @click="saveSettings" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-900/40 transition-all">Update Database</button>
                 </div>
+                <p class="text-[10px] text-gray-500 italic">Example: https://docs.google.com/spreadsheets/d/.../pub?output=csv</p>
+            </div>
+
+            <header class="bg-[#1e293b]/50 px-8 py-6 flex justify-between items-center border-b border-white/5">
+                <h1 class="text-2xl font-bold text-white" x-text="getCurrentBox()?.title || 'No Data Found'"></h1>
                 <div class="flex items-center space-x-4">
                     <input type="text" x-model="search" placeholder="🔍 ค้นหารายการ..." 
                         class="bg-[#0f172a] border border-white/10 rounded-2xl px-6 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-80 text-white shadow-2xl">
                 </div>
             </header>
 
-            <section class="flex-1 p-8 overflow-y-auto space-y-8 bg-[#0f172a]">
-                <div class="glass rounded-[2rem] p-8 shadow-2xl">
-                    <div style="height: 350px;">
-                        <canvas id="itemChart"></canvas>
+            <section class="flex-1 p-8 overflow-y-auto space-y-8">
+                <div x-show="loading" class="text-center py-20 text-blue-400 animate-pulse">กำลังดึงข้อมูล...</div>
+                
+                <div x-show="!loading" class="space-y-8">
+                    <div class="glass rounded-[2rem] p-8 shadow-2xl">
+                        <div style="height: 350px;">
+                            <canvas id="itemChart"></canvas>
+                        </div>
                     </div>
-                </div>
 
-                <div class="glass rounded-[2rem] overflow-hidden shadow-2xl">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-gray-500 text-[10px] uppercase tracking-[0.2em] border-b border-white/5">
-                                <th class="px-10 py-6">รายการของรางวัล (Items)</th>
+                    <div class="glass rounded-[2rem] overflow-hidden shadow-2xl border border-white/5">
+                        <table class="w-full text-left">
+                            <thead class="text-gray-500 text-[10px] uppercase tracking-[0.2em] border-b border-white/5 bg-white/[0.02]">
+                                <th class="px-10 py-6">รายการไอเทม</th>
                                 <th class="px-10 py-6 text-center">จำนวนการแลก (ครั้ง)</th>
                             </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/5">
-                            <template x-for="item in filteredItems()" :key="item.name + item.sys">
-                                <tr class="hover:bg-white/[0.02] transition-colors group">
-                                    <td class="px-10 py-6">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="text-xl" x-text="getEmoji(item.name + item.sys)"></span>
-                                            <div>
-                                                <div class="text-sm font-semibold text-gray-200 group-hover:text-blue-400 transition-colors" x-text="item.name"></div>
-                                                <div class="text-[10px] text-gray-500 font-mono mt-0.5" x-text="item.sys"></div>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <template x-for="item in filteredItems()" :key="item.name + item.sys">
+                                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                                        <td class="px-10 py-6">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="text-xl" x-text="getEmoji(item.name + item.sys)"></span>
+                                                <div>
+                                                    <div class="text-sm font-semibold text-gray-200" x-text="item.name"></div>
+                                                    <div class="text-[10px] text-gray-500 font-mono mt-0.5" x-text="item.sys"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-10 py-6 text-center">
-                                        <span class="text-2xl font-bold text-emerald-400" x-text="item.count"></span>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-
-                    <div class="bg-blue-600 px-10 py-10 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Grand Total Statistics</p>
-                            <p class="text-white text-sm opacity-80">สรุปยอดรวมการแลกเปลี่ยนทั้งหมดของช่วงเวลานี้</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-5xl font-black text-white tracking-tighter" x-text="getCurrentBox()?.total.toLocaleString()"></span>
-                            <span class="text-blue-200 font-bold ml-2 uppercase text-xs tracking-widest">Times</span>
+                                        </td>
+                                        <td class="px-10 py-6 text-center">
+                                            <span class="text-2xl font-bold text-emerald-400 font-mono" x-text="item.count"></span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-10 py-10 flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] text-blue-200 uppercase tracking-widest font-bold">Grand Total Statistics</p>
+                                <p class="text-white text-sm opacity-80" x-text="getCurrentBox()?.title"></p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-5xl font-black text-white tracking-tighter" x-text="getCurrentBox()?.total.toLocaleString() || 0"></span>
+                                <span class="text-blue-200 font-bold ml-2 uppercase text-[10px]">Times</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -118,29 +145,65 @@
                 search: '',
                 rewardData: [],
                 chartInstance: null,
-                csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=0&single=true&output=csv',
+                
+                // Admin Settings
+                isAdmin: false,
+                showLogin: false,
+                showSettings: false,
+                loginPass: '',
+                masterPassword: '123', // *** เปลี่ยนรหัสผ่านตรงนี้ ***
+                tempUrl: '',
+                csvUrl: localStorage.getItem('rewardCsvUrl') || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRFrdwnCKV_cB0AECX2p47917IPmwoamAqO5ubOz9wbyXMOLA5eiGnKVSIXrW5zEg0PLzMH5903mXtO/pub?gid=0&single=true&output=csv',
 
                 async init() {
+                    this.tempUrl = this.csvUrl;
                     await this.fetchData();
                     this.loading = false;
                 },
 
+                doLogin() {
+                    if (this.loginPass === this.masterPassword) {
+                        this.isAdmin = true;
+                        this.showLogin = false;
+                        this.loginPass = '';
+                        alert('Logged in as Admin');
+                    } else {
+                        alert('Incorrect Password!');
+                    }
+                },
+
+                saveSettings() {
+                    if (!this.tempUrl.includes('output=csv')) {
+                        alert('ลิงก์ต้องลงท้ายด้วย output=csv นะครับ');
+                        return;
+                    }
+                    localStorage.setItem('rewardCsvUrl', this.tempUrl);
+                    this.csvUrl = this.tempUrl;
+                    this.fetchData();
+                    this.showSettings = false;
+                    alert('Database Updated!');
+                },
+
                 getEmoji(text) {
                     text = text.toLowerCase();
-                    if (text.includes('car') || text.includes('sup_') || text.includes('sp_')) return '🏎️';
+                    if (text.includes('car') || text.includes('sup_') || text.includes('sp_')) return '🚗';
                     if (text.includes('skin') || text.includes('weapon')) return '🔫';
-                    if (text.includes('fashion') || text.includes('set') || text.includes('pack')) return '🎒';
+                    if (text.includes('fashion') || text.includes('set') || text.includes('pack')) return '✨';
                     return '🎁';
                 },
 
                 async fetchData() {
+                    this.loading = true;
                     try {
                         const res = await fetch(this.csvUrl + '&cb=' + Date.now());
                         const data = await res.text();
                         this.rewardData = this.parseCSV(data);
-                        if (this.rewardData.length > 0 && !this.activeTab) this.activeTab = this.rewardData[0].id;
+                        if (this.rewardData.length > 0) {
+                            if (!this.activeTab) this.activeTab = this.rewardData[0].id;
+                        }
                         this.$nextTick(() => this.renderChart());
                     } catch (e) { console.error(e); }
+                    this.loading = false;
                 },
 
                 parseCSV(csv) {
@@ -174,7 +237,9 @@
                 renderChart() {
                     const box = this.getCurrentBox();
                     if (!box) return;
-                    const ctx = document.getElementById('itemChart').getContext('2d');
+                    const canvas = document.getElementById('itemChart');
+                    if (!canvas) return;
+                    const ctx = canvas.getContext('2d');
                     if (this.chartInstance) this.chartInstance.destroy();
                     this.chartInstance = new Chart(ctx, {
                         type: 'bar',
@@ -182,9 +247,7 @@
                             labels: box.items.map(i => i.name),
                             datasets: [{
                                 data: box.items.map(i => i.count),
-                                backgroundColor: [
-                                    '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'
-                                ],
+                                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'],
                                 borderRadius: 12,
                                 borderSkipped: false,
                             }]
@@ -208,5 +271,4 @@
         }
     </script>
 </body>
-
 </html>
