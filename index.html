@@ -210,7 +210,7 @@
                 getEventDate(boxId) {
                     // Match box IDs (box1, box2, box3) to timeline array
                     const index = parseInt(boxId.replace('box','')) - 1;
-                    return this.timeline[index] ? this.timeline[index].date : 'N/A';
+                    return this.timeline[index] ? this.timeline[index].date : 'ไม่ระบุช่วงเวลา';
                 },
 
                 checkAuth() { if (sessionStorage.getItem('exchangeAuth') === 'true') { this.isLoggedIn = true; this.fetchData(); } },
@@ -291,3 +291,4 @@
     </script>
 </body>
 </html>
+
