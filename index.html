@@ -323,7 +323,8 @@
                 const email = payload.email;
                 const emailHash = await hashEmail(email);
 
-                const alpineData = document.querySelector('[x-data]').__x.$data;
+                const el = document.querySelector('[x-data]');
+                const alpineData = el._x_dataStack[0];
 
                 if (AUTH_CONFIG.allowedHashes.includes(emailHash)) {
                     alpineData.isLoggedIn = true;
@@ -337,8 +338,11 @@
                 }
             } catch (e) {
                 console.error('Auth Error:', e);
-                const alpineData = document.querySelector('[x-data]').__x.$data;
-                alpineData.authError = '❌ เกิดข้อผิดพลาดในการยืนยันตัวตน';
+                try {
+                    const el = document.querySelector('[x-data]');
+                    const alpineData = el._x_dataStack[0];
+                    alpineData.authError = '❌ เกิดข้อผิดพลาดในการยืนยันตัวตน';
+                } catch (_) { }
             }
         }
 
